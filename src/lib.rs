@@ -1,5 +1,3 @@
-use std::mem;
-
 #[derive(Debug, Clone)]
 pub enum HTableItems {
     IntegerItem(i64),
@@ -9,16 +7,35 @@ pub enum HTableItems {
 }
 
 #[derive(Debug)]
+pub struct HTableData<'a> {
+    items: Vec<&'a HTableItems>,
+}
+
+impl<'a> HTableData<'a> {
+    pub fn new(items: Vec<&'a HTableItems>) -> Self {
+        HTableData {
+            items
+        }
+    }
+
+    /// Get the items as an owned variable
+    pub fn get_items(self) -> Vec<&'a HTableItems> {
+        self.items
+    }
+}
+
+
+#[derive(Debug)]
 pub struct IterHTableData<'a> {
     curr_idx: usize,
     items: Vec<&'a HTableItems>,
 }
 
 impl<'a> IterHTableData<'a> {
-    pub fn new(row_data: Vec<&'a HTableItems>) -> Self {
+    pub fn new(items: Vec<&'a HTableItems>) -> Self {
         IterHTableData {
             curr_idx: 0,
-            items: row_data
+            items
         }
     }
 }
@@ -76,6 +93,34 @@ impl HTable {
 
     pub fn number_of_rows(&self) -> usize {
         self.0[0].len()
+    }
+
+    pub fn get_row(&self, row: usize) -> Option<HTableData> {
+        let mut row_data = Vec::new();
+
+        if row < self.number_of_rows() {
+            for c_inx in 0..self.number_of_columns() {
+                row_data.push(&self.0[c_inx][row]);
+            }
+
+            Some(HTableData::new(row_data))
+        }else{
+            None
+        }
+    }
+
+    pub fn get_col(&self, col: usize) -> Option<HTableData> {
+        let mut col_data = Vec::new();
+
+        if col < self.number_of_columns() {
+            for r_idx in 0..self.number_of_rows() {
+                col_data.push(&self.0[col][r_idx]);
+            }
+
+            Some(HTableData::new(col_data))
+        }else{
+            None
+        }
     }
 
     pub fn iter_row(&self, row: usize) -> Option<impl Iterator<Item=&HTableItems>> {
