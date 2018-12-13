@@ -81,7 +81,7 @@ impl HTable {
     pub fn iter_row(&self, row: usize) -> Option<impl Iterator<Item=&HTableItems>> {
         let mut row_data = Vec::new();
 
-        if row >= 0 && row < self.number_of_rows() {
+        if row < self.number_of_rows() {
             for c_inx in 0..self.number_of_columns() {
                 row_data.push(&self.0[c_inx][row]);
             }
@@ -95,8 +95,8 @@ impl HTable {
     pub fn iter_col(&self, col: usize) -> Option<impl Iterator<Item=&HTableItems>> {
         let mut col_data = Vec::new();
 
-        if col >= 0 && col < self.number_of_columns() {
-            for r_idx in 0..self.number_of_columns() {
+        if col < self.number_of_columns() {
+            for r_idx in 0..self.number_of_rows() {
                 col_data.push(&self.0[col][r_idx]);
             }
 
