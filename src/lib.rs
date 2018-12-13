@@ -19,7 +19,7 @@ impl<'a> HTableData<'a> {
     }
 
     /// Get the items as an owned variable
-    pub fn get_items(self) -> Vec<&'a HTableItems> {
+    pub fn items(self) -> Vec<&'a HTableItems> {
         self.items
     }
 }
@@ -53,7 +53,7 @@ impl<'a> Iterator for IterHTableData<'a> {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct HTable(Vec<Vec<HTableItems>>);
 
 impl HTable {
